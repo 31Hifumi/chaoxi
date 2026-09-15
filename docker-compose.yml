@@ -1,0 +1,17 @@
+services:
+  api:
+    build: ./backend
+    container_name: chaoxi-api
+    restart: unless-stopped
+    ports:
+      # 只绑回环：外网一律走 nginx 的 443，不能直连这个端口
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # 数据库落在宿主机 ./data，容器重建数据不丢
+      - ./data:/data
+    env_file:
+      # 运行时注入密钥，不过构建、不进镜像
+      - ./backend/.env
+    environment:
+      # 显式钉死：否则 .env 里的本地相对路径会盖掉它，数据就落进容器而不是卷里
+      CHAOXI_DB: /data/chaoxi.db

@@ -12,6 +12,12 @@ dependencies = [
 [dependency-groups]
 dev = ["pytest", "pytest-asyncio"]
 
+# 国内源。不配的话 lock 里会写死 files.pythonhosted.org，容器构建时拉不动
+[[tool.uv.index]]
+name = "tencent"
+url = "https://mirrors.cloud.tencent.com/pypi/simple/"
+default = true
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
