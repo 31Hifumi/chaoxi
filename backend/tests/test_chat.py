@@ -1,5 +1,4 @@
 from app.api import chat
-
 from app.db import session as store
 
 
@@ -77,6 +76,25 @@ def test_chat_appends_to_existing_session_history(client, conn, fake_llm):
     rows = store.get_messages(conn, sid)
     assert [m["role"] for m in rows] == ["user", "assistant", "user", "assistant"]
     assert rows[2]["content"] == "第二句"
+    assert rows[2]["role"] == "user"
+
+
+def test_chat_sends_history_to_llm(client, fake_llm):
+    """第二轮时交给模型的是「历史 + 当前句」，不是只有当前句。
+
+    这是多轮上下文这件事的全部意义：只发当前句的话，模型不知道前面聊过什么，
+    而且不报错——测试全绿、界面照常，你只会觉得它怎么老跑题。
+
+    这条只走 HTTP，不查库：它盯的是「交给模型什么」，不是「存了什么」。
+    """
+    first = client.post("/api/chat", json={"session_id": None, "message": "第一句"}).json()
+    client.post("/api/chat", json={"session_id": first["session_id"], "message": "第二句"})
+
+    assert fake_llm.calls[1] == [
+        {"role": "user", "content": "第一句"},
+        {"role": "assistant", "content": fake_llm.reply},
+        {"role": "user", "content": "第二句"},
+    ]
 
 
 # ────────────────────────── 入参校验 ──────────────────────────

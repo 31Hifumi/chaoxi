@@ -105,6 +105,29 @@ def test_get_messages_returns_empty_list_for_empty_session(conn):
     assert store.get_messages(conn, sid) == []
 
 
+def test_get_messages_limit_returns_most_recent(conn):
+    """限制条数时要拿「最近的 N 条」，不是「最早的 N 条」。
+
+    这个顺序极容易写反：ORDER BY id DESC 取完还得掰成正序，
+    先切片再反转（rows[:count][::-1]）才是最近 N 条；
+    先反转再切片（rows[::-1][:count]）会变成最老的 N 条——而且不报错，
+    会话一长，模型就永远只记得开头那几句。
+    """
+    sid = store.create_session(conn, "s")
+    for text in ("一", "二", "三", "四", "五"):
+        store.add_message(conn, sid, "user", text)
+
+    assert [r["content"] for r in store.get_messages(conn, sid, 2)] == ["四", "五"]
+
+
+def test_get_messages_limit_larger_than_total(conn):
+    """限制数超过实际条数时，全给你，不报错。"""
+    sid = store.create_session(conn, "s")
+    store.add_message(conn, sid, "user", "只有一条")
+
+    assert [r["content"] for r in store.get_messages(conn, sid, 100)] == ["只有一条"]
+
+
 # ────────────────────────── 级联删除 ──────────────────────────
 
 

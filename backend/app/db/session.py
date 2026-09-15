@@ -13,6 +13,7 @@ def add_message(conn,session_id:int,role:str,content:str)->int:
     conn.commit()
     return cur.lastrowid
 
-def get_messages(conn,session_id:int)->list:
-    rows= conn.execute("SELECT role,content FROM messages WHERE session_id = ? ORDER BY id",(session_id,),).fetchall()
+def get_messages(conn,session_id:int,count:int | None=None)->list:
+    rows= conn.execute("SELECT role,content FROM messages WHERE session_id = ? ORDER BY id DESC",(session_id,),).fetchall()
+    rows = rows[:count][::-1]
     return [{"role":r["role"],"content":r["content"]} for r in rows]
