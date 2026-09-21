@@ -51,6 +51,14 @@ function App() {
             </main>
             <footer>
                 <span>chaoxi</span>
+                <a
+                    className="beian"
+                    href="https://beian.miit.gov.cn/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    湘ICP备2026042157号-1
+                </a>
             </footer>
         </>
     )
