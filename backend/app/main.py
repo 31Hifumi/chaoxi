@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.db import init_db,connect
 from app.config import  load_settings
+from app.memory.store import init_vec_tables
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -11,8 +12,11 @@ async def lifespan(app:FastAPI):
         app.state.http_client = client
         app.state.settings=load_settings()
         conn = connect(app.state.settings.db_path)
-        init_db(conn)
-        yield
+        try:
+            init_db(conn)
+            init_vec_tables(conn,app.state.settings.embed_dim)
+            yield
+        finally:conn.close()
 
 
 def create_app()->FastAPI:

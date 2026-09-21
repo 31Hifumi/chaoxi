@@ -12,7 +12,9 @@ class Settings:
     deepseek_base_url: str
     deepseek_model: str
     db_path: Path
-
+    embed_model: str = "BAAI/bge-small-zh-v1.5"
+    embed_dim: int = 512  # 必须和 embed_model 对得上，否则向量表会建错
+    embed_path: str = "D:/fastembed-cache"  # 模型缓存放哪（默认也是 FASTEMBED_CACHE_PATH）
 
 def load_settings() -> Settings:
     api_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
@@ -23,4 +25,7 @@ def load_settings() -> Settings:
         deepseek_base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
         deepseek_model=os.getenv("DEEPSEEK_MODEL", "deepseek-flash"),
         db_path=Path(os.getenv("CHAOXI_DB", "chaoxi.db")),
+        embed_model=os.getenv("EMBED_MODEL", "BAAI/bge-small-zh-v1.5"),
+        embed_dim=int(os.getenv("EMBED_DIM", "512")),
+        embed_path=os.getenv("FASTEMBED_CACHE_PATH", "D:/fastembed-cache"),
     )
