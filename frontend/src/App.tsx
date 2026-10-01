@@ -59,6 +59,15 @@ function App() {
                 >
                     湘ICP备2026042157号-1
                 </a>
+                <a
+                    className="beian"
+                    href="https://beian.mps.gov.cn/#/query/webSearch?code=430102002307"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <img className="beian-icon" src="/beian.png" alt="" />
+                    湘公网安备430102002307号
+                </a>
             </footer>
         </>
     )

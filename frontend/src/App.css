@@ -203,5 +203,12 @@ footer {
       opacity: 1;
       text-decoration: underline;
     }
+
+    .beian-icon {
+      width: 14px;
+      height: 14px;
+      margin-right: 4px;
+      vertical-align: -2px;
+    }
   }
 }
